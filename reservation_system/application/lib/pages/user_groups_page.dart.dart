@@ -1,44 +1,47 @@
+import 'package:application/data_providers/group_api.dart';
+import 'package:application/models/group.dart';
+import 'package:application/pages/create_group_page.dart';
+import 'package:application/pages/group_page.dart';
 import 'package:flutter/material.dart';
 
-import '../data_providers/items_api.dart';
-import '../models/item.dart';
-
-import 'create_item_page.dart';
-import 'item_page.dart';
-
-class ItemsPage extends StatefulWidget {
-  static String id = '/ItemsPage';
-  const ItemsPage({Key? key}) : super(key: key);
+class UserGroupsPage extends StatefulWidget {
+  static String id = '/UserGroupsPage';
+  const UserGroupsPage({Key? key}) : super(key: key);
 
   @override
-  State<ItemsPage> createState() => _ItemsPageState();
+  State<UserGroupsPage> createState() => _UserGroupsPageState();
 }
 
-class _ItemsPageState extends State<ItemsPage> {
-  final itemsApi = ItemsApi();
+class _UserGroupsPageState extends State<UserGroupsPage> {
+  final groupApi = GroupApi();
+
+  List<Widget> buildAppBarActions() {
+    return [
+      IconButton(
+        onPressed: (() {
+          Navigator.of(context)
+              .push(
+                MaterialPageRoute(
+                  builder: (context) => const CreateGroupPage(),
+                ),
+              )
+              .then((_) => setState(() {}));
+        }),
+        icon: const Icon(Icons.add),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Your items"),
-          actions: [
-            IconButton(
-              onPressed: (() {
-                Navigator.of(context)
-                    .push(
-                      MaterialPageRoute(
-                        builder: (context) => const CreateItemPage(),
-                      ),
-                    )
-                    .then((_) => setState(() {}));
-              }),
-              icon: const Icon(Icons.add),
-            )
-          ],
+          title: const Text("Your groups"),
+          actions: buildAppBarActions(),
         ),
         body: Column(children: [
-          FutureBuilder<List<Item>>(
-            future: itemsApi.getItemsByProviderId(),
+          FutureBuilder<List<Group>>(
+            future: groupApi.getGroupsForUser(),
             builder: (context, snapshot) {
               if (snapshot.hasData &&
                   snapshot.connectionState == ConnectionState.done) {
@@ -47,7 +50,7 @@ class _ItemsPageState extends State<ItemsPage> {
                   shrinkWrap: true,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    var items = snapshot.data!;
+                    var groups = snapshot.data!;
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Material(
@@ -61,8 +64,8 @@ class _ItemsPageState extends State<ItemsPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ItemPage(
-                                  item: items[index],
+                                builder: (context) => GroupPage(
+                                  group: groups[index],
                                 ),
                               ),
                             );
@@ -71,10 +74,11 @@ class _ItemsPageState extends State<ItemsPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                               children: [
-                                Text("Name: ${items[index].name}"),
+                                Text("Name: ${groups[index].name}"),
                                 Text(
-                                    "Description: ${items[index].description}"),
-                                Text("Price: ${items[index].price}"),
+                                    "Description: ${groups[index].description}"),
+                                Text(
+                                    "Number Of Items: ${groups[index].numberOfItems}"),
                               ],
                             ),
                           ),
@@ -84,8 +88,11 @@ class _ItemsPageState extends State<ItemsPage> {
                   },
                 );
               } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return const Padding(
+                  padding: EdgeInsets.only(top: 250.0),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 );
               }
             },

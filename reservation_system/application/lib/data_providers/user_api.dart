@@ -77,6 +77,28 @@ class UserApi {
     }
   }
 
+  Future<User?> getUserByEmail(String email) async {
+    const url = 'http://localhost:8081/api/user/getByEmail';
+    final String token = sharedPrefs.token;
+    http.Response response = await http.post(
+      Uri.parse(url),
+      body: json.encode({
+        "email": email,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token,
+      },
+    );
+    if (response.statusCode == 200) {
+      final userJson = jsonDecode(response.body);
+      final user = User.fromJson(userJson);
+      return user;
+    } else {
+      return null;
+    }
+  }
+
   Future<User> getCurrentUser() async {
     final String token = sharedPrefs.token;
     final String userId = sharedPrefs.userId;

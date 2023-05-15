@@ -7,9 +7,9 @@ let User = require('./user.js');
 
 class UserContract extends Contract {
 
-    async CreateUser(ctx, userId, email, overbooking) {
+    async CreateUser(ctx, userId, email) {
 
-        let user = new User(userId, email, overbooking);
+        let user = new User(userId, email);
 
         await ctx.stub.putState(user.userId, Buffer.from(stringify(user)));
         return JSON.stringify(user);
@@ -23,13 +23,13 @@ class UserContract extends Contract {
         return userJSON.toString();
     }
 
-    async UpdateUser(ctx, userId, email, overbooking) {
+    async UpdateUser(ctx, userId, email) {
         const exists = await this.UserExists(ctx, userId);
         if (!exists) {
             throw new Error(`The user ${userId} does not exist`);
         }
 
-        let updatedUser = new User(userId, email, overbooking);
+        let updatedUser = new User(userId, email);
 
         return ctx.stub.putState(updatedUser.userId, Buffer.from(stringify(updatedUser)));
     }

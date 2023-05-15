@@ -1,7 +1,8 @@
 import 'package:application/pages/auth_page.dart';
+import 'package:application/pages/cancellation_page.dart';
 import 'package:application/pages/edit_profile_page.dart';
 import 'package:application/pages/home_page.dart';
-import 'package:application/pages/items_page.dart';
+import 'package:application/pages/user_groups_page.dart.dart';
 import 'package:application/pages/registration_page.dart';
 import 'package:application/pages/reservations_page.dart';
 import 'package:application/utils/shared_prefs.dart';
@@ -29,7 +30,7 @@ class App extends StatelessWidget {
         AuthPage.id: (context) => const AuthPage(),
         RegistrationPage.id: (context) => const RegistrationPage(),
         HomePage.id: (context) => const HomePage(),
-        ItemsPage.id: (context) => const ItemsPage(),
+        UserGroupsPage.id: (context) => const UserGroupsPage(),
         ReservationsPage.id: (context) => const ReservationsPage(),
         EditProfilePage.id: (context) => const EditProfilePage(),
       },

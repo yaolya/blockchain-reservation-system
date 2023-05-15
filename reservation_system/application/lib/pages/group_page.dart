@@ -1,29 +1,81 @@
+import 'package:application/data_providers/group_api.dart';
+import 'package:application/models/group.dart';
+import 'package:application/pages/components/title_container.dart';
 import 'package:flutter/material.dart';
 
 import '../data_providers/items_api.dart';
 import '../models/item.dart';
 
+import '../utils/shared_prefs.dart';
+import '../utils/styles.dart';
+import 'components/text_container.dart';
+import 'create_item_page.dart';
 import 'item_page.dart';
 
-class ReservationsPage extends StatefulWidget {
-  static String id = '/ReservationsPage';
-  const ReservationsPage({Key? key}) : super(key: key);
+class GroupPage extends StatefulWidget {
+  static String id = '/GroupPage';
+  const GroupPage({super.key, required this.group});
+
+  final Group group;
 
   @override
-  State<ReservationsPage> createState() => _ReservationsPageState();
+  State<GroupPage> createState() => _GroupPageState();
 }
 
-class _ReservationsPageState extends State<ReservationsPage> {
+class _GroupPageState extends State<GroupPage> {
   final itemsApi = ItemsApi();
+  final groupApi = GroupApi();
+
+  List<Widget> buildAppBarActions() {
+    if (widget.group.userId == sharedPrefs.userId) {
+      return [
+        IconButton(
+          onPressed: (() {
+            Navigator.of(context)
+                .push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        CreateItemPage(groupId: widget.group.id),
+                  ),
+                )
+                .then((_) => setState(() {}));
+          }),
+          icon: const Icon(Icons.add),
+        ),
+      ];
+    } else {
+      return [];
+    }
+  }
+
+  Widget buildGroupOwnerInformation() {
+    return Column(
+      children: [
+        TextContainer(
+            prop: "Overbooking allowed",
+            text: widget.group.overbooking.toString()),
+        TextContainer(
+            prop: "Current load",
+            text:
+                (widget.group.numberOfReservations / widget.group.numberOfItems)
+                    .toStringAsFixed(2)),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Your reservations"),
+          actions: buildAppBarActions(),
         ),
         body: Column(children: [
+          TitleContainer(title: widget.group.name),
+          TextContainer(prop: "Description", text: widget.group.description),
+          if (widget.group.userId == sharedPrefs.userId)
+            buildGroupOwnerInformation(),
           FutureBuilder<List<Item>>(
-            future: itemsApi.getItemsByOwnerId(),
+            future: itemsApi.getItemsByGroup(widget.group.id),
             builder: (context, snapshot) {
               if (snapshot.hasData &&
                   snapshot.connectionState == ConnectionState.done) {
@@ -48,10 +100,10 @@ class _ReservationsPageState extends State<ReservationsPage> {
                               MaterialPageRoute(
                                 builder: (context) => ItemPage(
                                   item: items[index],
-                                  group: null,
+                                  group: widget.group,
                                 ),
                               ),
-                            ).then((_) => setState(() {}));
+                            );
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),

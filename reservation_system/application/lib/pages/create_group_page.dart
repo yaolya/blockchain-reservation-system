@@ -1,39 +1,36 @@
+import 'package:application/data_providers/group_api.dart';
 import 'package:flutter/material.dart';
-import '../data_providers/items_api.dart';
 import '../extensions/validation_extension.dart';
 import '../widgets/custom_form_field.dart';
 
-class CreateItemPage extends StatefulWidget {
-  const CreateItemPage({super.key, required this.groupId});
-  final String groupId;
+class CreateGroupPage extends StatefulWidget {
+  const CreateGroupPage({super.key});
 
   @override
-  State<CreateItemPage> createState() => _CreateItemPageState();
+  State<CreateGroupPage> createState() => _CreateGroupPageState();
 }
 
-class _CreateItemPageState extends State<CreateItemPage> {
-  final itemsApi = ItemsApi();
+class _CreateGroupPageState extends State<CreateGroupPage> {
+  final groupApi = GroupApi();
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  TextEditingController priceController = TextEditingController();
+  TextEditingController overbookingController = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
     nameController.dispose();
     descriptionController.dispose();
-    priceController.dispose();
+    overbookingController.dispose();
   }
 
-  var cancellationValue = false;
-  var rebookingValue = false;
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create a new item'),
+        title: const Text('Create a new group'),
       ),
       body: Form(
         key: _formKey,
@@ -59,36 +56,16 @@ class _CreateItemPageState extends State<CreateItemPage> {
             ),
             const SizedBox(height: 15),
             CustomFormField(
-              hintText: 'Price',
-              controller: priceController,
+              hintText: 'Overbooking',
+              controller: overbookingController,
               validator: (val) {
-                if (!val!.isValidPrice) {
-                  return 'Enter valid price (format: 12.0)';
+                if (!val!.isValidPercent) {
+                  return 'Enter valid overbooking percent (from 0 to 100)';
                 }
                 return null;
               },
             ),
             const SizedBox(height: 15),
-            CheckboxListTile(
-              title: const Text("Cancellation"),
-              value: cancellationValue,
-              onChanged: (newValue) {
-                setState(() {
-                  cancellationValue = newValue!;
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
-            CheckboxListTile(
-              title: const Text("Rebooking"),
-              value: rebookingValue,
-              onChanged: (newValue) {
-                setState(() {
-                  rebookingValue = newValue!;
-                });
-              },
-              controlAffinity: ListTileControlAffinity.leading,
-            ),
             buildCreateButton(),
           ],
         ),
@@ -98,13 +75,10 @@ class _CreateItemPageState extends State<CreateItemPage> {
 
   Future<void> onCreatePressed() async {
     if (_formKey.currentState!.validate()) {
-      final res = await itemsApi.createItem(
+      final res = await groupApi.createGroup(
         nameController.text,
         descriptionController.text,
-        priceController.text,
-        cancellationValue,
-        rebookingValue,
-        widget.groupId,
+        int.parse(overbookingController.text),
       );
       if (res == 200) {
         if (mounted) {
@@ -119,7 +93,7 @@ class _CreateItemPageState extends State<CreateItemPage> {
       padding: const EdgeInsets.all(2.0),
       child: ElevatedButton(
         onPressed: onCreatePressed,
-        child: const Text('Create item'),
+        child: const Text('Create group'),
       ),
     );
   }

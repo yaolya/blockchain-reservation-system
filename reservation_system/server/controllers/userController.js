@@ -46,8 +46,7 @@ class UserController {
 
             let result = await contract.submitTransaction('CreateUser',
                 userId,
-                req.body["email"],
-                0
+                req.body["email"]
             );
             res.status(200).send(`${helper.JSONString(result.toString())}`);
 
@@ -84,6 +83,19 @@ class UserController {
             res.send(`${helper.JSONString(result.toString())}`);
 
             gateway.disconnect();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    async getByEmail(req, res) {
+        try {
+            const { email } = req.body;
+            let user = await queries.getUserByEmail(email);
+            if (!user) {
+                res.status(400).send();
+            }
+            res.status(200).send(user);
         } catch (e) {
             console.log(e);
         }

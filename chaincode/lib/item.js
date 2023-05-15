@@ -13,11 +13,12 @@ class Item {
      * @param price - Item price
      * @param cancellation - true if cancellation is allowed otherwise false
      * @param rebooking - true if rebooking is allowed otherwise false
+     * @param groupId - id of a group of items
      * @param ownerId - id of a current Item owner
      * @param providerId - id of an Item's provider
      * @returns - Item object
      */
-    constructor(itemId, name, description, price, cancellation, rebooking, providerId) {
+    constructor(itemId, name, description, price, cancellation, rebooking, groupId, providerId) {
 
         this.itemId = itemId;
         this.name = name;
@@ -26,6 +27,7 @@ class Item {
         this.cancellation = cancellation;
         this.rebooking = rebooking;
         this.ownerId = null;
+        this.groupId = groupId;
         this.providerId = providerId;
         this.type = 'item';
         if (this.__isContract) {

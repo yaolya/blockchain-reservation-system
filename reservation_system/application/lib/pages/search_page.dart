@@ -1,8 +1,8 @@
-import 'package:application/data_providers/items_api.dart';
-import 'package:application/pages/item_page.dart';
+import 'package:application/pages/group_page.dart';
 import 'package:flutter/material.dart';
 
-import '../models/item.dart';
+import '../data_providers/group_api.dart';
+import '../models/group.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -12,14 +12,14 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final itemsApi = ItemsApi();
+  final groupApi = GroupApi();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(children: [
-      FutureBuilder<List<Item>>(
-        future: itemsApi.getAvailableItems(),
+      FutureBuilder<List<Group>>(
+        future: groupApi.getGroups(),
         builder: (context, snapshot) {
           if (snapshot.hasData &&
               snapshot.connectionState == ConnectionState.done) {
@@ -28,7 +28,7 @@ class _SearchPageState extends State<SearchPage> {
               shrinkWrap: true,
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
-                var items = snapshot.data!;
+                var groups = snapshot.data!;
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Material(
@@ -42,19 +42,19 @@ class _SearchPageState extends State<SearchPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ItemPage(
-                              item: items[index],
-                            ),
+                            builder: (context) =>
+                                GroupPage(group: groups[index]),
                           ),
-                        );
+                        ).then((_) => setState(() {}));
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
-                            Text("Name: ${items[index].name}"),
-                            Text("Description: ${items[index].description}"),
-                            Text("Price: ${items[index].price}"),
+                            Text("Name: ${groups[index].name}"),
+                            Text("Description: ${groups[index].description}"),
+                            Text(
+                                "Number of items: ${groups[index].numberOfItems}"),
                           ],
                         ),
                       ),

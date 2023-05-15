@@ -18,4 +18,9 @@ extension Validation on String {
     final phoneRegExp = RegExp(r"^[0-9]+.[0-9]+$");
     return phoneRegExp.hasMatch(this);
   }
+
+  bool get isValidPercent {
+    final phoneRegExp = RegExp(r"^(0|[1-9][0-9]?|100)$");
+    return phoneRegExp.hasMatch(this);
+  }
 }

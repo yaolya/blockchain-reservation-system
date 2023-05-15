@@ -9,15 +9,13 @@ class User {
      *  
      * @param userId - unique Id which corresponds to a created User
      * @param email - User email
-     * @param overbooking - percent of overbooking allowed for User's items
      * @returns - User object
      */
-    constructor(userId, email, overbooking) {
+    constructor(userId, email) {
 
         if (this.validateUser(userId)) {
             this.userId = userId;
             this.email = email;
-            this.overbooking = overbooking;
             this.type = 'user';
             if (this.__isContract) {
                 delete this.__isContract;

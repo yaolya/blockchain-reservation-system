@@ -28,12 +28,35 @@ class ItemsApi {
     }
   }
 
+  Future<List<Item>> getItemsByGroup(String id) async {
+    final url = 'http://localhost:8081/api/item/getAllByGroup/$id';
+    final String token = sharedPrefs.token;
+    http.Response response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token,
+      },
+    );
+    if (response.statusCode == 200) {
+      List list = jsonDecode(response.body);
+      List<Item> result = [];
+      for (var item in list) {
+        result.add(Item.fromJson(item["Record"]));
+      }
+      return result;
+    } else {
+      throw Exception();
+    }
+  }
+
   Future createItem(
     String name,
     String description,
     String price,
     bool cancellation,
     bool rebooking,
+    String groupId,
   ) async {
     const url = 'http://localhost:8081/api/item/create';
     final String token = sharedPrefs.token;
@@ -50,6 +73,7 @@ class ItemsApi {
         "price": price,
         "cancellation": cancellation,
         "rebooking": rebooking,
+        "groupId": groupId,
       }),
     );
     return response.statusCode;
@@ -57,6 +81,7 @@ class ItemsApi {
 
   Future reserveItem(
     String itemId,
+    String newOwnerId,
   ) async {
     const url = 'http://localhost:8081/api/item/reserve';
     final String token = sharedPrefs.token;
@@ -69,6 +94,8 @@ class ItemsApi {
       },
       body: json.encode({
         "itemId": itemId,
+        "newOwnerId": newOwnerId,
+        "userId": sharedPrefs.userId,
       }),
     );
     return response.statusCode;
@@ -179,6 +206,30 @@ class ItemsApi {
         var historyObj =
             HistoryObject(convertedDateTime, Item.fromJson(item["Value"]));
         result.add(historyObj);
+      }
+      return result;
+    } else {
+      throw Exception();
+    }
+  }
+
+  Future<List<String>> getItemReservations(String id) async {
+    final url = 'http://localhost:8081/api/item/getItemReservations/$id';
+    final String token = sharedPrefs.token;
+    http.Response response = await http.get(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token,
+      },
+    );
+    if (response.statusCode == 200) {
+      List list = jsonDecode(response.body);
+      List<String> result = [];
+      for (var item in list) {
+        print(item);
+        var userId = item["Record"]["userId"];
+        result.add(userId);
       }
       return result;
     } else {

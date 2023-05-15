@@ -1,6 +1,6 @@
 import 'package:application/pages/auth_page.dart';
 import 'package:application/pages/edit_profile_page.dart';
-import 'package:application/pages/items_page.dart';
+import 'package:application/pages/user_groups_page.dart.dart';
 import 'package:application/pages/reservations_page.dart';
 import 'package:application/utils/shared_prefs.dart';
 import 'package:flutter/material.dart';
@@ -34,11 +34,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const ItemsPage(),
+                      builder: (context) => const UserGroupsPage(),
                     ),
                   );
                 },
-                child: const Text('Items'),
+                child: const Text('Your groups'),
               ),
               ElevatedButton(
                 onPressed: () {
