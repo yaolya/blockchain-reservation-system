@@ -56,7 +56,7 @@ class ItemsContract extends Contract {
         const item = JSON.parse(itemString);
         const groupString = await GroupContract.ReadGroup(ctx, item.groupId);
         const group = JSON.parse(groupString);
-        if (group.numberOfReservations / group.numberOfItems < (group.overbooking / 100 + 1) || item.ownerId == null) {
+        if (group.numberOfReservations / group.numberOfItems < (group.overbooking / 100 + 1) && item.ownerId == null) {
             group.numberOfReservations += 1;
             item.ownerId = newOwnerId;
             await ReservationContract.CreateReservation(ctx, reservationId, itemId, currentUserId);
@@ -65,16 +65,13 @@ class ItemsContract extends Contract {
             return JSON.stringify({ "newOwnerId": newOwnerId });
         }
         else if (item.rebooking == "true" && item.ownerId == currentUserId) {
-            const reservationString = await this.GetReservation(ctx, currentUserId, itemId);
-            const reservation = (JSON.parse(reservationString))[0].Record;
-            await ReservationContract.UpdateReservation(ctx, reservation.reservationId, itemId, newOwnerId);
-            const oldOwnerId = item.ownerId;
+            const reservationArray = await this.GetReservation(ctx, currentUserId, itemId);
+            const reservation = JSON.parse(reservationArray)[0].Record;
+            reservation.userId = newOwnerId;
+            await ctx.stub.putState(reservation.reservationId, Buffer.from(stringify(reservation)));
             item.ownerId = newOwnerId;
             await ctx.stub.putState(item.itemId, Buffer.from(stringify(item)));
-            return JSON.stringify({
-                "newOwnerId": newOwnerId,
-                "oldOwnerId": oldOwnerId
-            });
+            return JSON.stringify(reservation);
         } else {
             throw new Error(`The item ${itemId} is already reserved`);
         }
@@ -86,8 +83,8 @@ class ItemsContract extends Contract {
         const groupString = await GroupContract.ReadGroup(ctx, item.groupId);
         const group = JSON.parse(groupString);
         if (item.cancellation == "true" && item.ownerId != null) {
-            const reservationString = await this.GetReservation(ctx, userId, itemId);
-            const reservation = JSON.parse(reservationString)[0].Record;
+            const reservationArray = await this.GetReservation(ctx, userId, itemId);
+            const reservation = JSON.parse(reservationArray)[0].Record;
             await ReservationContract.DeleteReservation(ctx, reservation.reservationId);
             item.ownerId = null;
             group.numberOfReservations -= 1;
@@ -198,7 +195,6 @@ class ItemsContract extends Contract {
         };
 
         let queryResults = await this.query(ctx, JSON.stringify(queryString));
-        // return queryResults;
         return JSON.stringify(JSON.parse(queryResults.toString()));
     }
 

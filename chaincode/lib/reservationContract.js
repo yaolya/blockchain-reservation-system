@@ -20,12 +20,12 @@ class ReservationContract extends Contract {
         return reservationJSON.toString();
     }
 
-    static async UpdateReservation(ctx, reservationId, itemId, userId) {
+    // static async UpdateReservation(ctx, reservationId, itemId, userId) {
 
-        let updatedReservation = new Reservation(reservationId, itemId, userId);
-
-        await ctx.stub.putState(updatedReservation.reservationId, Buffer.from(stringify(updatedReservation)));
-    }
+    //     let updatedReservation = new Reservation(reservationId, itemId, userId);
+    //     await ctx.stub.putState(reservationId, Buffer.from(stringify(updatedReservation)));
+    //     return JSON.stringify(updatedReservation);
+    // }
 
     static async DeleteReservation(ctx, reservationId) {
         await ctx.stub.deleteState(reservationId);

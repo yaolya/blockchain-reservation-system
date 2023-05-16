@@ -179,7 +179,6 @@ class ItemController {
                 req.body["userId"],
                 req.body["itemId"]
             ); 
-            console.log(r);
             res.status(200).send(`${helper.JSONString(r.toString())}`);
 
             gateway.disconnect();
