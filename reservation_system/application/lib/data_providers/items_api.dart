@@ -101,6 +101,28 @@ class ItemsApi {
     return response.statusCode;
   }
 
+  Future transferItem(
+    String itemId,
+    String newOwnerId,
+  ) async {
+    const url = 'http://localhost:8081/api/item/transfer';
+    final String token = sharedPrefs.token;
+
+    var response = await http.put(
+      Uri.parse(url),
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token,
+      },
+      body: json.encode({
+        "itemId": itemId,
+        "newOwnerId": newOwnerId,
+        "userId": sharedPrefs.userId,
+      }),
+    );
+    return response.statusCode;
+  }
+
   Future cancelItem(
     String itemId,
   ) async {
@@ -227,7 +249,6 @@ class ItemsApi {
       List list = jsonDecode(response.body);
       List<String> result = [];
       for (var item in list) {
-        print(item);
         var userId = item["Record"]["userId"];
         result.add(userId);
       }

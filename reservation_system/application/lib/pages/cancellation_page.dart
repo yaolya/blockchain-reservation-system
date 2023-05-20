@@ -34,16 +34,25 @@ class _CancellationPageState extends State<CancellationPage> {
       appBar: AppBar(
         title: const Text('Cancel/transfer your reservation'),
       ),
-      body: buildColumn(),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(child: buildColumn()),
+        ],
+      ),
     );
   }
 
   Widget buildColumn() {
-    return Column(
-      children: [
-        buildRebooking(),
-        buildCancellation(),
-      ],
+    return Padding(
+      padding: const EdgeInsets.only(top: 100.0),
+      child: Column(
+        children: [
+          buildRebooking(),
+          const SizedBox(height: 8.0),
+          buildCancellation(),
+        ],
+      ),
     );
   }
 
@@ -54,16 +63,19 @@ class _CancellationPageState extends State<CancellationPage> {
         child: Column(
           children: [
             const SizedBox(height: 60),
-            CustomFormField(
-              hintText: 'New owner email',
-              controller: newOwnerController,
-              validator: (val) {
-                if (!val!.isValidEmail) return 'Enter valid email';
-                return null;
-              },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CustomFormField(
+                hintText: 'New owner email',
+                controller: newOwnerController,
+                validator: (val) {
+                  if (!val!.isValidEmail) return 'Enter valid email';
+                  return null;
+                },
+              ),
             ),
-            const SizedBox(height: 15),
             buildButton("Transfer booking", onTransferPressed),
+            const SizedBox(height: 15),
           ],
         ),
       );
@@ -94,8 +106,7 @@ class _CancellationPageState extends State<CancellationPage> {
       final userEmail = newOwnerController.text;
       final user = await userApi.getUserByEmail(userEmail);
       if (user != null) {
-        print(user.userId);
-        final res = await itemsApi.reserveItem(widget.item.id, user.userId);
+        final res = await itemsApi.transferItem(widget.item.id, user.userId);
         if (res == 200) {
           if (mounted) {
             Navigator.pop(context, true);

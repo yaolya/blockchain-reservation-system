@@ -7,7 +7,6 @@ import '../data_providers/items_api.dart';
 import '../models/item.dart';
 
 import '../utils/shared_prefs.dart';
-import '../utils/styles.dart';
 import 'components/text_container.dart';
 import 'create_item_page.dart';
 import 'item_page.dart';
@@ -49,16 +48,19 @@ class _GroupPageState extends State<GroupPage> {
   }
 
   Widget buildGroupOwnerInformation() {
+    var reservedNumber = 0.0;
+    String reserved = "0";
+    if (widget.group.numberOfItems != 0) {
+      reservedNumber =
+          widget.group.numberOfReservations / widget.group.numberOfItems;
+      reserved = reservedNumber.toStringAsFixed(2);
+    }
     return Column(
       children: [
         TextContainer(
             prop: "Overbooking allowed",
-            text: widget.group.overbooking.toString()),
-        TextContainer(
-            prop: "Current load",
-            text:
-                (widget.group.numberOfReservations / widget.group.numberOfItems)
-                    .toStringAsFixed(2)),
+            text: "${widget.group.overbooking.toString()}%"),
+        TextContainer(prop: "Currently reserved", text: reserved),
       ],
     );
   }

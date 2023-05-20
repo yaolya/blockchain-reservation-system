@@ -56,15 +56,22 @@ class ItemsContract extends Contract {
         const item = JSON.parse(itemString);
         const groupString = await GroupContract.ReadGroup(ctx, item.groupId);
         const group = JSON.parse(groupString);
-        if (group.numberOfReservations / group.numberOfItems < (group.overbooking / 100 + 1) && item.ownerId == null) {
+        if ((group.numberOfReservations + 1) / group.numberOfItems < (group.overbooking / 100 + 1)) {
             group.numberOfReservations += 1;
             item.ownerId = newOwnerId;
             await ReservationContract.CreateReservation(ctx, reservationId, itemId, currentUserId);
             await ctx.stub.putState(group.groupId, Buffer.from(stringify(group)));
             await ctx.stub.putState(item.itemId, Buffer.from(stringify(item)));
             return JSON.stringify({ "newOwnerId": newOwnerId });
+        } else {
+            throw new Error(`The item ${itemId} is already reserved`);
         }
-        else if (item.rebooking == "true" && item.ownerId == currentUserId) {
+    }
+
+    async TransferItem(ctx, itemId, newOwnerId, currentUserId) {
+        const itemString = await this.ReadItem(ctx, itemId);
+        const item = JSON.parse(itemString);
+        if (item.rebooking == "true" && item.ownerId == currentUserId) {
             const reservationArray = await this.GetReservation(ctx, currentUserId, itemId);
             const reservation = JSON.parse(reservationArray)[0].Record;
             reservation.userId = newOwnerId;
@@ -73,7 +80,7 @@ class ItemsContract extends Contract {
             await ctx.stub.putState(item.itemId, Buffer.from(stringify(item)));
             return JSON.stringify(reservation);
         } else {
-            throw new Error(`The item ${itemId} is already reserved`);
+            throw new Error(`The item ${itemId} cannot be transferred`);
         }
     }
 

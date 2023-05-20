@@ -171,6 +171,23 @@ class ItemController {
         }
     }
 
+    async transfer(req, res) {
+        try {
+            const { gateway, contract } = await network.createConnection(req.user.userId, 'ItemsContract');
+
+            let r = await contract.submitTransaction('transferItem',
+                req.body["itemId"],
+                req.body["newOwnerId"],
+                req.body["userId"]
+            ); 
+            res.status(200).send(`${helper.JSONString(r.toString())}`);
+
+            gateway.disconnect();
+        } catch (e) {
+            res.status(400).send(e);
+        }
+    }
+
     async getReservation(req, res) {
         try {
             const { gateway, contract } = await network.createConnection(req.user.userId, 'ItemsContract');

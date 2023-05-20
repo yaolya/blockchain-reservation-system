@@ -1,5 +1,4 @@
 import 'package:application/pages/auth_page.dart';
-import 'package:application/pages/cancellation_page.dart';
 import 'package:application/pages/edit_profile_page.dart';
 import 'package:application/pages/home_page.dart';
 import 'package:application/pages/user_groups_page.dart.dart';

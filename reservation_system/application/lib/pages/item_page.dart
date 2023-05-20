@@ -33,9 +33,9 @@ class _ItemPageState extends State<ItemPage> {
   @override
   void initState() {
     if (widget.group != null) {
-      isReserved =
-          !(widget.group!.numberOfReservations / widget.group!.numberOfItems <
-              (widget.group!.overbooking / 100 + 1));
+      isReserved = !((widget.group!.numberOfReservations + 1) /
+              widget.group!.numberOfItems <
+          (widget.group!.overbooking / 100 + 1));
     } else {
       isReserved = widget.item.ownerId != null;
     }
@@ -90,6 +90,10 @@ class _ItemPageState extends State<ItemPage> {
     return [];
   }
 
+  String boolToString(String boolean) {
+    return (boolean == "true") ? "allowed" : "not allowed";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,8 +106,11 @@ class _ItemPageState extends State<ItemPage> {
           TitleContainer(title: widget.item.name),
           TextContainer(prop: "Description", text: widget.item.description),
           TextContainer(prop: "Price", text: widget.item.price.toString()),
-          TextContainer(prop: "Cancellation", text: widget.item.cancellation),
-          TextContainer(prop: "Rebooking", text: widget.item.rebooking),
+          TextContainer(
+              prop: "Cancellation",
+              text: boolToString(widget.item.cancellation)),
+          TextContainer(
+              prop: "Rebooking", text: boolToString(widget.item.rebooking)),
           buildProviderEmail(widget.item.providerId),
           if (widget.item.providerId == sharedPrefs.userId)
             buildItemReservations(),
@@ -156,7 +163,7 @@ class _ItemPageState extends State<ItemPage> {
           List<String> users = snapshot.data!;
           return Column(
             children: [
-              const TextContainer(prop: "Reservations", text: ""),
+              const TextContainer(prop: "Currently owned", text: ""),
               ListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,

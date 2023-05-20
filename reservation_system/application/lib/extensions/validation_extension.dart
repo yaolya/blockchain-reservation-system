@@ -5,7 +5,7 @@ extension Validation on String {
   }
 
   bool get isValidName {
-    final nameRegExp = RegExp(r"^[a-zA-Z0-9.,]+");
+    final nameRegExp = RegExp(r"^[a-zA-Zа-яА-Я0-9.,-]+");
     return nameRegExp.hasMatch(this);
   }
 
