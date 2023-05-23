@@ -16,8 +16,11 @@ class TextContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8.0),
-      child: Row(children: [
-        Text("$prop: ", style: Styles.propertyStyle),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(
+          "$prop: ",
+          style: Styles.propertyStyle,
+        ),
         Expanded(
           child: Text(
             text,

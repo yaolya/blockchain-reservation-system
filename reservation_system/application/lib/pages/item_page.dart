@@ -34,7 +34,7 @@ class _ItemPageState extends State<ItemPage> {
   void initState() {
     if (widget.group != null) {
       isReserved = !((widget.group!.numberOfReservations + 1) /
-              widget.group!.numberOfItems <
+              widget.group!.numberOfItems <=
           (widget.group!.overbooking / 100 + 1));
     } else {
       isReserved = widget.item.ownerId != null;

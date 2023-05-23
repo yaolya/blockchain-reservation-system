@@ -56,7 +56,7 @@ class ItemsContract extends Contract {
         const item = JSON.parse(itemString);
         const groupString = await GroupContract.ReadGroup(ctx, item.groupId);
         const group = JSON.parse(groupString);
-        if ((group.numberOfReservations + 1) / group.numberOfItems < (group.overbooking / 100 + 1)) {
+        if ((group.numberOfReservations + 1) / group.numberOfItems <= (group.overbooking / 100 + 1)) {
             group.numberOfReservations += 1;
             item.ownerId = newOwnerId;
             await ReservationContract.CreateReservation(ctx, reservationId, itemId, currentUserId);
