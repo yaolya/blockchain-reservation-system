@@ -4,7 +4,6 @@ const stringify = require('json-stringify-deterministic');
 const { Contract } = require('fabric-contract-api');
 
 let Item = require('./item.js');
-let Reservation = require('./reservation.js');
 let GroupContract = require('./groupContract.js');
 let ReservationContract = require('./reservationContract.js');
 

@@ -14,7 +14,6 @@ class Item {
      * @param cancellation - true if cancellation is allowed otherwise false
      * @param rebooking - true if rebooking is allowed otherwise false
      * @param groupId - id of a group of items
-     * @param ownerId - id of a current Item owner
      * @param providerId - id of an Item's provider
      * @returns - Item object
      */
@@ -26,7 +25,6 @@ class Item {
         this.price = price;
         this.cancellation = cancellation;
         this.rebooking = rebooking;
-        this.ownerId = null;
         this.groupId = groupId;
         this.providerId = providerId;
         this.type = 'item';

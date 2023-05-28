@@ -1,0 +1,22 @@
+test:
+  name: simple
+  description: This is an example benchmark for caliper, to test the backend DLT's
+  workers:
+    type: local
+    number: 5
+  rounds:
+      - label: getItemByID
+        description: Get Item by ID benchmark
+        txDuration: 30
+        rateControl: 
+          type: maximum-rate
+          opts:
+            tps: 100
+            step: 5
+            sampleInterval: 20
+            includeFailed: false
+        workload:
+          module: scenarios/workload.js
+          arguments:
+            assets: 10
+            contractId: ItemsContract
